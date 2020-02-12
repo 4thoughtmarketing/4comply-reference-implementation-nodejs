@@ -1,5 +1,6 @@
 var express = require("express");
 var router = express.Router();
+var axios = require("axios");
 
 /**
  * Respond to RTP Webhooks for all regulations
@@ -29,9 +30,12 @@ router.get("/rtp", function(req, res, next) {
     let sfFileBlob = await salesforceConnector.getDataFile(email);
 
     // Upload to 4Comply:
+    // Notice in this case, we are passing in the Existing Step Name, since we don't want to proceed to the next step
     await uploadDataTo4Comply(requestId, stepName, sfFileBlob);
+
     // Let's assume this is all the data we need to upload.  Let's mark this step as complete.
     await goToNextStep(requestId, nextStepName);
+    
     responseObj = {success: true};
   }
 
@@ -53,6 +57,10 @@ router.get("/consent", function(req,res,next) {
 
   res.send({success: true});
 });
+
+const uploadDataTo4Comply = (requestId, stepName, sfFileBlob) => {
+  await axios({method: "put", data: {files: [sfFileBlob]}, url: `https://api-demo.4comply.io/v1/rightrequests?id=${requestId}&nextState=${stepName}`})
+}
 
 const salesforceConnector = {
   getDataFile: async () => {
