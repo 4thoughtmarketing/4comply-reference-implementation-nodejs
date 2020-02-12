@@ -39,8 +39,29 @@ router.get("/rtp", function(req, res, next) {
   res.send(responseObj);
 });
 
+/**
+ * Respond to a new Consent Entry
+ */
+router.get("/consent", function(req,res,next) {
+  let data = req.body;
+
+  let emailAddress = data.email_address; // email of person who just gave their consent
+  let consentValue = data.consent_code; // "true" or "false"
+
+  // Update consent value in salesforce (just an example action we can take)
+  await salesforceConnector.updateUserData(data);
+
+  res.send({success: true});
+});
+
 const salesforceConnector = {
   getDataFile: async () => {
+    await setTimeout(2000);
+    return {
+      data: "salesforce data string"
+    }
+  },
+  updateUserData: async (data) => {
     await setTimeout(2000);
     return {
       data: "salesforce data string"
