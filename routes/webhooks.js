@@ -5,7 +5,7 @@ var axios = require("axios");
 /**
  * Respond to RTP Webhooks for all regulations
  */
-router.get("/rtp", function(req, res, next) {
+router.get("/rtp", async function(req, res, next) {
   let data = req.body;
 
   let regulation = getRegulation(data.regulation_id);
@@ -46,7 +46,7 @@ router.get("/rtp", function(req, res, next) {
 /**
  * Respond to a new Consent Entry
  */
-router.get("/consent", function(req,res,next) {
+router.get("/consent", async function(req,res,next) {
   let data = req.body;
 
   let emailAddress = data.email_address; // email of person who just gave their consent
@@ -59,7 +59,7 @@ router.get("/consent", function(req,res,next) {
 });
 
 const uploadDataTo4Comply = (requestId, stepName, sfFileBlob) => {
-  await axios({method: "put", data: {files: [sfFileBlob]}, url: `https://api-demo.4comply.io/v1/rightrequests?id=${requestId}&nextState=${stepName}`})
+  axios({method: "put", data: {files: [sfFileBlob]}, url: `https://api-demo.4comply.io/v1/rightrequests?id=${requestId}&nextState=${stepName}`})
 }
 
 const salesforceConnector = {
